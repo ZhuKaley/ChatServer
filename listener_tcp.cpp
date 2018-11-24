@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <string.h>
 #include <netinet/in.h>
 
@@ -43,7 +45,7 @@ bool listener_tcp::start()
 	utils::set_nonblock(m_listen_fd);
 	utils::set_reuseaddr(m_listen_fd);
 
-	if(::bind(m_listen_fd, &server_addr, sizeof(server_addr)) == -1)
+	if(::bind(m_listen_fd, (const struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
 	{
 		std::cout << "bind failed." << std::endl;
 		return false;

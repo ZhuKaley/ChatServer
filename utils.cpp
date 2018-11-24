@@ -86,5 +86,5 @@ bool utils::set_nonblock(int& sockfd)
 bool utils::set_reuseaddr(int& sockfd)
 {
 	int on = 1;
-	return ::setsockopt(sockfd, SOL_SOCKEt, SO_REUSEADDR, &on, sizeof(on)) == 0;
+	return ::setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == 0;
 }
