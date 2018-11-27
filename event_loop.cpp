@@ -130,7 +130,7 @@ bool event_loop::event_add(event_info* ev_info)
     return ::epoll_ctl(m_epfd, EPOLL_CTL_ADD, ev_info->fd, &event) == 0;
 }
 
-bool event_loop::event_mod(/*const int fd, const int ev_types, */event_info* ev_info)
+bool event_loop::event_mod(event_info* ev_info)
 {
     if(!ev_info)
     {
@@ -138,32 +138,15 @@ bool event_loop::event_mod(/*const int fd, const int ev_types, */event_info* ev_
     }
 
     ev_info_del(ev_info->fd);
+	
     struct epoll_event event;
     event.events = ev_info->ev_types;
     event.data.fd = ev_info->fd;
     event.data.ptr = (void*)ev_info;
+	
     m_evs_info.insert(std::pair<const int, const event_info*>(ev_info->fd, ev_info));
 
     return ::epoll_ctl(m_epfd, EPOLL_CTL_MOD, ev_info->fd, &event) == 0;
-    
-#if 0
-    if(m_epfd < 0 || fd < 0 || !ev_info)
-    {
-        return false;
-    }
-
-    ev_info->ev_types = ev_types;
-
-    struct epoll_event event;
-    event.events = ev_types;
-    event.data.fd = fd;
-    event.data.ptr = (void*)ev_info;
-
-    ev_info_del(fd);
-    m_evs_info.insert(std::pair<const int, const event_info*>(fd, ev_info));
-
-    return ::epoll_ctl(m_epfd, EPOLL_CTL_MOD, fd, &event) == 0;
-#endif
 }
 
 bool event_loop::event_del(const int fd)
@@ -173,10 +156,10 @@ bool event_loop::event_del(const int fd)
         return false;
     }
 
+    ev_info_del(fd);
+
     struct epoll_event ev;
     ev.data.fd = fd;
-
-    ev_info_del(fd);
     
     return ::epoll_ctl(m_epfd, EPOLL_CTL_DEL, fd, &ev) == 0;
 }
@@ -186,21 +169,16 @@ void event_loop::on_stop(const int fd, const int ev_types, void *obj)
     if(!obj)
     {
         return;
-    }
-
-    event_loop *ev_loop = (event_loop *)obj;
+    }    
     
-    ev_loop->m_runnable = false;
     if(fd >= 0)
     {
         char msg[1];
         ::recv(fd, msg, 1, 0);
-
-        //test
-        std::string str(msg);
-        std::cout << str.c_str() << std::endl;
-        //end test
     }
+	
+	event_loop *ev_loop = (event_loop *)obj;
+    ev_loop->m_runnable = false;
 }
 
 void event_loop::handle_events(const int ev_count)

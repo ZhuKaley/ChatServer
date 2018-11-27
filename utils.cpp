@@ -57,18 +57,18 @@ uint16_t utils::ntohs(uint16_t net_short)
 
 	return ::ntohs(net_short);
 }
-
+#include <iostream>
 bool utils::is_bigend()
 {
 	union
 	{
-		int a;
+		short a;
 		char c;
 	} un;
 
-	un.a = 1;
+	un.a = 0x0102;
 
-	return un.c == 1;
+	return un.c == 0x01;	//从低位到高位，先存高位，为大端
 }
 
 bool utils::set_nonblock(int& sockfd)

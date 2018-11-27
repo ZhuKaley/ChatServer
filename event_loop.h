@@ -11,7 +11,7 @@ struct event_info
     int fd;
     int ev_types;
     void *obj;
-    void(*ev_callback)(const int/*fd*/, const int/*ev_types*/, void *obj);
+    void(*ev_callback)(const int/*fd*/, const int/*ev_types*/, void *obj/*class*/);
 
     event_info() :
         fd(-1),
@@ -34,7 +34,7 @@ public:
     bool stop();
 
     bool event_add(event_info* ev_info);
-    bool event_mod(/*const int fd, const int ev_types, */event_info* ev_info);
+    bool event_mod(event_info* ev_info);
     bool event_del(const int fd);
 
 private:

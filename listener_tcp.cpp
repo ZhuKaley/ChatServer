@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <unistd.h>
 #include <string.h>
 #include <netinet/in.h>
 
@@ -58,7 +58,7 @@ bool listener_tcp::start()
 	
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = utils::htons(6666);
-	server_addr.sin_addr.s_addr = ::htonl(INADDR_ANY);   //utils::htonl(INADDR_ANY);
+	server_addr.sin_addr.s_addr = utils::htonl(INADDR_ANY);
 
 	utils::set_nonblock(m_listen_fd);
 	utils::set_reuseaddr(m_listen_fd);
@@ -70,7 +70,7 @@ bool listener_tcp::start()
         m_listen_fd = -1;
 		return false;
 	}
-
+	
     if(::listen(m_listen_fd, SOMAXCONN) == -1)
     {
         std::cout << "listen failed." << std::endl;
@@ -103,6 +103,7 @@ void listener_tcp::on_accept(int fd, int ev_types, void *obj)
     memset(&client_addr, 0, sizeof(client_addr));
     socklen_t len = sizeof(client_addr);
     int client_fd = ::accept(fd, (struct sockaddr *)&client_addr, &len);
+	std::cout << "client_fd: " << client_fd << std::endl;
 }
 
 
