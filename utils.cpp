@@ -9,13 +9,13 @@
 bool utils::create_socket_tcp(int& sockfd)
 {
     sockfd = ::socket(AF_INET, SOCK_STREAM, 0);
-    return sockfd != -1;
+    return sockfd >= 0;
 }
 
 bool utils::create_socket_udp(int& sockfd)
 {
     sockfd = ::socket(AF_INET, SOCK_DGRAM, 0);
-    return sockfd != -1;
+    return sockfd >= 0;
 }
 
 uint32_t utils::htonl(uint32_t host_long)
