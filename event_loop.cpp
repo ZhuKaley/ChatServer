@@ -46,7 +46,7 @@ bool event_loop::init()
 
 void event_loop::deinit()
 {
-    std::map<const int, const event_info*>::iterator it;
+    std::map<const int, event_info*>::iterator it;
     for(it = m_evs_info.begin(); it != m_evs_info.end(); it++)
     {
         ev_info_del(it->first);
@@ -125,7 +125,7 @@ bool event_loop::event_add(event_info* ev_info)
     event.data.ptr = (void*)ev_info;
     event.events = ev_info->ev_types;
 
-    m_evs_info.insert(std::pair<const int, const event_info*>(ev_info->fd, ev_info));
+    m_evs_info.insert(std::pair<const int, event_info*>(ev_info->fd, ev_info));
 
     return ::epoll_ctl(m_epfd, EPOLL_CTL_ADD, ev_info->fd, &event) == 0;
 }
@@ -144,7 +144,7 @@ bool event_loop::event_mod(event_info* ev_info)
     event.data.fd = ev_info->fd;
     event.data.ptr = (void*)ev_info;
 	
-    m_evs_info.insert(std::pair<const int, const event_info*>(ev_info->fd, ev_info));
+    m_evs_info.insert(std::pair<const int, event_info*>(ev_info->fd, ev_info));
 
     return ::epoll_ctl(m_epfd, EPOLL_CTL_MOD, ev_info->fd, &event) == 0;
 }
@@ -192,11 +192,12 @@ void event_loop::handle_events(const int ev_count)
 
 void event_loop::ev_info_del(int fd)
 {
-    std::map<const int, const event_info *>::iterator it = m_evs_info.find(fd);
+    std::map<const int, event_info *>::iterator it = m_evs_info.find(fd);
     if(it != m_evs_info.end())
     {
         delete it->second;
         it->second = NULL;
+        
         m_evs_info.erase(it);
     }
 }

@@ -27,26 +27,6 @@ bool listener_tcp::init()
         return false;
     }
 
-    return true;
-}
-
-void listener_tcp::deinit()
-{
-    if(m_ev_loop)
-    {
-        delete m_ev_loop;
-        m_ev_loop = NULL;
-    }
-}
-
-bool listener_tcp::start()
-{
-    if(!m_ev_loop)
-    {
-        std::cout << "event loop not exist." << std::endl;
-        return false;
-    }
-    
     if(!utils::create_socket_tcp(m_listen_fd))
     {
     	std::cout << "create tcp socket failed." << std::endl;
@@ -86,6 +66,26 @@ bool listener_tcp::start()
     ev_info->ev_callback = &listener_tcp::on_accept;
     m_ev_loop->event_add(ev_info);
 
+    return true;
+}
+
+void listener_tcp::deinit()
+{
+    if(m_ev_loop)
+    {
+        delete m_ev_loop;
+        m_ev_loop = NULL;
+    }
+}
+
+bool listener_tcp::start()
+{
+    if(!m_ev_loop)
+    {
+        std::cout << "event loop not exist." << std::endl;
+        return false;
+    }
+
     std::cout << "tcp listener stating..." << std::endl;
 
     return m_ev_loop->run();
@@ -98,11 +98,12 @@ bool listener_tcp::stop()
 
 void listener_tcp::on_accept(int fd, int ev_types, void *obj)
 {
-    std::cout << "on accept fd: " << fd << std::endl;
     struct sockaddr_in client_addr;
     memset(&client_addr, 0, sizeof(client_addr));
     socklen_t len = sizeof(client_addr);
+    
     int client_fd = ::accept(fd, (struct sockaddr *)&client_addr, &len);
+    
 	std::cout << "client_fd: " << client_fd << std::endl;
 }
 

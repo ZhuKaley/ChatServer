@@ -47,7 +47,7 @@ private:
     bool m_runnable;
     int m_epfd;
     int m_pairfd[2];
-    std::map<const int, const event_info *> m_evs_info;
+    std::map<const int, event_info *> m_evs_info;
     std::vector<struct epoll_event> m_evs;
 };
 

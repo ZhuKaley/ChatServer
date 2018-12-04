@@ -80,7 +80,7 @@ bool utils::set_nonblock(int& sockfd)
 	}
 	
 	flags |= O_NONBLOCK;
-	return ::fcntl(sockfd, F_SETFD, flags) != -1;	
+	return ::fcntl(sockfd, F_SETFD, flags) != -1;
 }
 
 bool utils::set_reuseaddr(int& sockfd)
